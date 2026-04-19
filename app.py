@@ -4,9 +4,8 @@ import joblib
 import matplotlib.pyplot as plt
 import numpy as np
 
-placement_model = joblib.load("placement_model.pkl")
-salary_model = joblib.load("salary_model.pkl")
-df_ref = pd.read_csv("ingested/B.csv")
+placement_model = joblib.load("artifacts/placement_model.pkl")
+salary_model = joblib.load("artifacts/salary_model.pkl")
 
 # config
 st.set_page_config(page_title="Student Placement", layout="wide")
@@ -90,27 +89,12 @@ features = ["cgpa", "technical_skill_score", "soft_skill_score", "backlogs"]
 labels = ["CGPA", "Tech Skill", "Soft Skill", "Backlogs"]
 
 user_vals = [input_data[f].values[0] for f in features]
-avg_vals = [df_ref[f].mean() for f in features]
-
-df_plot = pd.DataFrame({"Feature": labels,
-                        "Your Value": user_vals,
-                        "Average": avg_vals})
-
-df_plot["Status"] = ["Above Avg" if u > a else "Below Avg"
-                     for u, a in zip(user_vals, avg_vals)]
-
-st.dataframe(df_plot)
 
 # bar chart
-fig, ax = plt.subplots(figsize=(7,3))
-x = np.arange(len(features))
-width = 0.35
-ax.bar(x - width/2, user_vals, width, label='You')
-ax.bar(x + width/2, avg_vals, width, label='Average')
-ax.set_xticks(x)
-ax.set_xticklabels(labels, rotation=20)
-ax.set_title("Your Profile vs Average")
-ax.legend()
+fig, ax = plt.subplots(figsize=(4,2.4))
+ax.bar(labels, user_vals)
+ax.set_title("Your Key Features")
+plt.tight_layout()
 st.pyplot(fig)
 
 # prediction result
@@ -132,22 +116,3 @@ else:
     with col3:
         st.metric("Salary", "N/A")
     st.warning("Perlu meningkatkan profil untuk peluang kerja")
-
-# insight
-st.subheader("Insight & Recommendation")
-insights = []
-if cgpa < df_ref["cgpa"].mean():
-    insights.append("Tingkatkan CGPA")
-if tech < df_ref["technical_skill_score"].mean():
-    insights.append("Tingkatkan technical skill")
-if soft < df_ref["soft_skill_score"].mean():
-    insights.append("Tingkatkan soft skill")
-if backlogs > df_ref["backlogs"].mean():
-    insights.append("Kurangi backlog")
-if internship == 0:
-    insights.append("Ambil internship untuk meningkatkan peluang")
-if len(insights) == 0:
-    st.success("Profil kamu sudah sangat baik dibanding rata-rata!")
-else:
-    for ins in insights:
-        st.write("-", ins)

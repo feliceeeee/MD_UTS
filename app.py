@@ -4,8 +4,8 @@ import joblib
 import matplotlib.pyplot as plt
 import numpy as np
 
-placement_model = joblib.load("artifacts/placement_model.pkl")
-salary_model = joblib.load("artifacts/salary_model.pkl")
+placement_model = joblib.load("placement_model.pkl")
+salary_model = joblib.load("salary_model.pkl")
 df_ref = pd.read_csv("ingested/B.csv")
 
 # config
